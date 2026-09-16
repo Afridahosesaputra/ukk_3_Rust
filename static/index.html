@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplikasi Pengaduan Sarana Sekolah - UKK RPL 2025/2026</title>
+    <meta name="description" content="Sistem Informasi Pengaduan dan Aspirasi Sarana Prasarana Sekolah Berbasis Rust">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Main Style -->
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <!-- Top Navbar -->
+    <header class="main-header">
+        <div class="container header-container">
+            <div class="brand">
+                <div class="brand-icon">
+                    <i class="fa-solid fa-school-flag"></i>
+                </div>
+                <div class="brand-text">
+                    <h1>SARPRAS CARE</h1>
+                    <p>Sistem Pengaduan Sarana Sekolah</p>
+                </div>
+            </div>
+
+            <!-- Navigation Tabs -->
+            <nav class="nav-tabs">
+                <button class="nav-tab active" id="tab-btn-siswa" onclick="switchView('siswa')">
+                    <i class="fa-solid fa-user-graduate"></i>
+                    <span>Portal Siswa</span>
+                </button>
+                <button class="nav-tab" id="tab-btn-admin" onclick="switchView('admin')">
+                    <i class="fa-solid fa-user-shield"></i>
+                    <span id="admin-nav-label">Portal Admin / Petugas</span>
+                </button>
+            </nav>
+
+            <div class="header-actions">
+                <button id="theme-toggle" class="btn-icon" title="Ubah Tema" onclick="toggleTheme()">
+                    <i class="fa-solid fa-moon"></i>
+                </button>
+                <div id="user-profile-badge" class="profile-badge hidden">
+                    <span id="profile-name">Administrator</span>
+                    <button class="btn-logout" onclick="logoutAdmin()" title="Keluar">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container main-content">
+        <!-- ============================================== -->
+        <!-- VIEW 1: PORTAL SISWA                           -->
+        <!-- ============================================== -->
+        <section id="view-siswa" class="view-section active">
+            <!-- Hero Banner -->
+            <div class="hero-banner">
+                <div class="hero-text">
+                    <h2>Laporkan Kerusakan & Aspirasi Sarana Sekolah</h2>
+                    <p>Bantu kami menjaga kenyamanan lingkungan belajar. Setiap pengaduan Anda akan ditindaklanjuti secara cepat dan transparan oleh tim sarpras sekolah.</p>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat-pill">
+                        <i class="fa-solid fa-bolt"></i>
+                        <span>Respon Cepat</span>
+                    </div>
+                    <div class="stat-pill">
+                        <i class="fa-solid fa-list-check"></i>
+                        <span>Pelacakan Real-Time</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-2-col">
+                <!-- FORM ASPIRASI SISWA -->
+                <div class="card form-card">
+                    <div class="card-header">
+                        <div class="card-header-icon bg-primary-light">
+                            <i class="fa-solid fa-pen-to-square text-primary"></i>
+                        </div>
+                        <div>
+                            <h3>Formulir Aspirasi Sarana</h3>
+                            <p class="subtitle">Isi data pengaduan keluhan fasilitas sekolah</p>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <form id="form-aspirasi" onsubmit="submitAspirasi(event)">
+                            <div class="form-row-2">
+                                <div class="form-group">
+                                    <label for="input-nisn"><i class="fa-solid fa-id-card"></i> NISN Siswa <span class="required">*</span></label>
+                                    <input type="text" id="input-nisn" placeholder="Contoh: 0061234567" required maxlength="10" pattern="[0-9]{10}" title="NISN harus berupa 10 digit angka">
+                                </div>
+                                <div class="form-group">
+                                    <label for="input-nama"><i class="fa-solid fa-user"></i> Nama Lengkap <span class="required">*</span></label>
+                                    <input type="text" id="input-nama" placeholder="Contoh: Ahmad Rizky" required>
+                                </div>
+                            </div>
+
+                            <div class="form-row-2">
+                                <div class="form-group">
+                                    <label for="input-kelas"><i class="fa-solid fa-graduation-cap"></i> Kelas <span class="required">*</span></label>
+                                    <select id="input-kelas" required>
+                                        <option value="">-- Pilih Kelas --</option>
+                                        <optgroup label="Kelas X">
+                                            <option value="X RPL 1">X RPL 1</option>
+                                            <option value="X RPL 2">X RPL 2</option>
+                                            <option value="X TKJ 1">X TKJ 1</option>
+                                            <option value="X TKJ 2">X TKJ 2</option>
+                                            <option value="X DKV 1">X DKV 1</option>
+                                        </optgroup>
+                                        <optgroup label="Kelas XI">
+                                            <option value="XI RPL 1">XI RPL 1</option>
+                                            <option value="XI RPL 2">XI RPL 2</option>
+                                            <option value="XI TKJ 1">XI TKJ 1</option>
+                                            <option value="XI TKJ 2">XI TKJ 2</option>
+                                            <option value="XI DKV 1">XI DKV 1</option>
+                                        </optgroup>
+                                        <optgroup label="Kelas XII">
+                                            <option value="XII RPL 1">XII RPL 1</option>
+                                            <option value="XII RPL 2">XII RPL 2</option>
+                                            <option value="XII TKJ 1">XII TKJ 1</option>
+                                            <option value="XII TKJ 2">XII TKJ 2</option>
+                                            <option value="XII DKV 1">XII DKV 1</option>
+                                        </optgroup>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="input-kategori"><i class="fa-solid fa-shapes"></i> Kategori Sarana <span class="required">*</span></label>
+                                    <select id="input-kategori" required>
+                                        <option value="">-- Memuat Kategori --</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="input-lokasi"><i class="fa-solid fa-location-dot"></i> Lokasi / Ruangan Spesifik <span class="required">*</span></label>
+                                <input type="text" id="input-lokasi" placeholder="Contoh: Lab RPL 2 / Ruang Kelas XII RPL 1 / Toilet Gedung B" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="input-deskripsi"><i class="fa-solid fa-align-left"></i> Rincian Pengaduan / Keluhan <span class="required">*</span></label>
+                                <textarea id="input-deskripsi" rows="3" placeholder="Jelaskan detail kerusakan sarana, kondisi, atau kendala yang dialami secara jelas..." required></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="input-foto"><i class="fa-solid fa-image"></i> Foto Bukti Sarana (Opsional)</label>
+                                <div class="file-upload-wrapper">
+                                    <input type="file" id="input-foto" accept="image/*" onchange="previewImage(event)">
+                                    <div class="upload-area" id="upload-drop-zone">
+                                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                                        <span>Klik atau seret foto kerusakan di sini</span>
+                                    </div>
+                                    <div id="image-preview-container" class="preview-box hidden">
+                                        <img id="image-preview-img" src="" alt="Preview Bukti">
+                                        <button type="button" class="btn-remove-preview" onclick="removeImagePreview()">&times;</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="reset" class="btn btn-secondary" onclick="removeImagePreview()">
+                                    <i class="fa-solid fa-rotate-left"></i> Reset
+                                </button>
+                                <button type="submit" class="btn btn-primary" id="btn-submit-aspirasi">
+                                    <i class="fa-solid fa-paper-plane"></i> Kirim Aspirasi Sekarang
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- PELACAKAN & HISTORI ASPIRASI SISWA -->
+                <div class="column-right">
+                    <div class="card tracker-card">
+                        <div class="card-header">
+                            <div class="card-header-icon bg-info-light">
+                                <i class="fa-solid fa-magnifying-glass-chart text-info"></i>
+                            </div>
+                            <div>
+                                <h3>Cek Status & Histori Aspirasi</h3>
+                                <p class="subtitle">Lacak progres perbaikan pengaduan sarana</p>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="search-box-wrapper">
+                                <div class="search-input-group">
+                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                    <input type="text" id="track-search-input" placeholder="Masukkan NISN Siswa atau Kode Tiket (misal: ASP-2026-001)">
+                                    <button class="btn btn-primary" onclick="searchStudentHistory()">
+                                        Lacak
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- List Hasil Histori Siswa -->
+                            <div class="history-results" id="student-history-list">
+                                <div class="empty-state">
+                                    <i class="fa-solid fa-clipboard-question"></i>
+                                    <p>Masukkan NISN Anda untuk melihat seluruh riwayat aspirasi yang pernah diajukan.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================== -->
+        <!-- VIEW 2: PORTAL ADMIN & PETUGAS                 -->
+        <!-- ============================================== -->
+        <section id="view-admin" class="view-section">
+            <!-- Modal Login Form jika belum login -->
+            <div id="admin-login-card" class="card login-card">
+                <div class="login-header">
+                    <div class="login-avatar">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <h3>Login Petugas / Administrator</h3>
+                    <p>Masukkan kredensial akun untuk mengelola sarana sekolah</p>
+                </div>
+                <form id="form-login" onsubmit="submitLogin(event)">
+                    <div class="form-group">
+                        <label for="login-username"><i class="fa-solid fa-user"></i> Username</label>
+                        <input type="text" id="login-username" placeholder="admin / petugas1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password"><i class="fa-solid fa-lock"></i> Password</label>
+                        <input type="password" id="login-password" placeholder="admin123 / petugas123" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block" id="btn-login">
+                        <i class="fa-solid fa-right-to-bracket"></i> Masuk Dashboard
+                    </button>
+                    <div class="login-hint">
+                        <p><strong>Demo Kredensial:</strong></p>
+                        <span>Admin: <code>admin</code> / <code>admin123</code></span> | 
+                        <span>Petugas: <code>petugas1</code> / <code>petugas123</code></span>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Admin Dashboard Content (Tampil setelah login) -->
+            <div id="admin-dashboard" class="hidden">
+                <!-- Dashboard Stats Counter -->
+                <div class="stats-grid">
+                    <div class="stat-card total">
+                        <div class="stat-icon"><i class="fa-solid fa-folder-open"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-label">Total Pengaduan</span>
+                            <h4 id="stat-total">0</h4>
+                        </div>
+                    </div>
+                    <div class="stat-card waiting">
+                        <div class="stat-icon"><i class="fa-solid fa-clock"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-label">Menunggu Verifikasi</span>
+                            <h4 id="stat-menunggu">0</h4>
+                        </div>
+                    </div>
+                    <div class="stat-card processing">
+                        <div class="stat-icon"><i class="fa-solid fa-screwdriver-wrench"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-label">Sedang Diproses</span>
+                            <h4 id="stat-diproses">0</h4>
+                        </div>
+                    </div>
+                    <div class="stat-card completed">
+                        <div class="stat-icon"><i class="fa-solid fa-circle-check"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-label">Telah Selesai</span>
+                            <h4 id="stat-selesai">0</h4>
+                        </div>
+                    </div>
+                    <div class="stat-card rejected">
+                        <div class="stat-icon"><i class="fa-solid fa-circle-xmark"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-label">Ditolak / Batal</span>
+                            <h4 id="stat-ditolak">0</h4>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Data Management Card -->
+                <div class="card data-card">
+                    <div class="card-header flex-between">
+                        <div>
+                            <h3>Daftar Aspirasi & Pengaduan Sarana</h3>
+                            <p class="subtitle">Kelola status, filter, berikan umpan balik, dan pantau progres perbaikan</p>
+                        </div>
+                        <div class="header-btns">
+                            <button class="btn btn-outline" onclick="openKategoriModal()">
+                                <i class="fa-solid fa-tags"></i> Kelola Kategori
+                            </button>
+                            <button class="btn btn-success" onclick="printReport()">
+                                <i class="fa-solid fa-print"></i> Cetak Laporan
+                            </button>
+                            <button class="btn btn-primary" onclick="loadAdminAspirasiList()">
+                                <i class="fa-solid fa-arrows-rotate"></i> Refresh
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <!-- Filter Bar Keseluruhan (Sesuai Soal UKK: per tanggal, per bulan, per siswa, per kategori, per status) -->
+                        <div class="filter-panel">
+                            <div class="filter-row">
+                                <!-- Filter Status -->
+                                <div class="filter-group">
+                                    <label><i class="fa-solid fa-filter"></i> Status:</label>
+                                    <select id="filter-status" onchange="loadAdminAspirasiList()">
+                                        <option value="semua">Semua Status</option>
+                                        <option value="menunggu">Menunggu</option>
+                                        <option value="diproses">Diproses</option>
+                                        <option value="selesai">Selesai</option>
+                                        <option value="ditolak">Ditolak</option>
+                                    </select>
+                                </div>
+
+                                <!-- Filter Kategori -->
+                                <div class="filter-group">
+                                    <label><i class="fa-solid fa-shapes"></i> Kategori:</label>
+                                    <select id="filter-kategori" onchange="loadAdminAspirasiList()">
+                                        <option value="0">Semua Kategori</option>
+                                    </select>
+                                </div>
+
+                                <!-- Filter Bulan (Per Bulan) -->
+                                <div class="filter-group">
+                                    <label><i class="fa-solid fa-calendar-days"></i> Per Bulan:</label>
+                                    <input type="month" id="filter-bulan" onchange="loadAdminAspirasiList()">
+                                </div>
+
+                                <!-- Filter Tanggal Mulai -->
+                                <div class="filter-group">
+                                    <label><i class="fa-solid fa-calendar"></i> Tgl Mulai:</label>
+                                    <input type="date" id="filter-tgl-mulai" onchange="loadAdminAspirasiList()">
+                                </div>
+
+                                <!-- Filter Tanggal Selesai -->
+                                <div class="filter-group">
+                                    <label><i class="fa-solid fa-calendar"></i> Tgl Selesai:</label>
+                                    <input type="date" id="filter-tgl-selesai" onchange="loadAdminAspirasiList()">
+                                </div>
+
+                                <!-- Filter Siswa / Search Text -->
+                                <div class="filter-group flex-grow">
+                                    <label><i class="fa-solid fa-user-tag"></i> Cari Siswa / NISN / Ruang:</label>
+                                    <div class="input-with-btn">
+                                        <input type="text" id="filter-search" placeholder="Cari nama, NISN, tiket..." onkeyup="if(event.key==='Enter') loadAdminAspirasiList()">
+                                        <button class="btn-filter-search" onclick="loadAdminAspirasiList()">
+                                            <i class="fa-solid fa-magnifying-glass"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="filter-actions">
+                                    <button class="btn btn-sm btn-secondary" onclick="resetFilters()" title="Reset Filter">
+                                        <i class="fa-solid fa-arrow-rotate-left"></i> Reset
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Data Table Aspirasi -->
+                        <div class="table-responsive">
+                            <table class="custom-table" id="table-aspirasi">
+                                <thead>
+                                    <tr>
+                                        <th>Kode Tiket</th>
+                                        <th>Tgl Pengaduan</th>
+                                        <th>Siswa (NISN)</th>
+                                        <th>Kelas</th>
+                                        <th>Kategori & Lokasi</th>
+                                        <th>Keluhan / Kerusakan</th>
+                                        <th>Progres</th>
+                                        <th>Status</th>
+                                        <th class="text-center">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-aspirasi-body">
+                                    <tr>
+                                        <td colspan="9" class="text-center">Memuat data...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ============================================== -->
+    <!-- MODAL 1: DETAIL & UMPAN BALIK ASPIRASI         -->
+    <!-- ============================================== -->
+    <div id="modal-detail" class="modal-overlay hidden">
+        <div class="modal-card modal-lg">
+            <div class="modal-header">
+                <div>
+                    <h3 id="modal-detail-title">Detail Pengaduan Sarana</h3>
+                    <span id="modal-detail-ticket" class="ticket-badge">ASP-XXXX-XXX</span>
+                </div>
+                <button class="btn-close-modal" onclick="closeModal('modal-detail')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="detail-grid">
+                    <!-- Info Pemohon -->
+                    <div class="detail-section">
+                        <h4><i class="fa-solid fa-user"></i> Informasi Siswa</h4>
+                        <div class="info-list">
+                            <div><span>Nama:</span> <strong id="modal-detail-nama">-</strong></div>
+                            <div><span>NISN:</span> <span id="modal-detail-nisn">-</span></div>
+                            <div><span>Kelas:</span> <span id="modal-detail-kelas">-</span></div>
+                            <div><span>Waktu Lapor:</span> <span id="modal-detail-waktu">-</span></div>
+                        </div>
+                    </div>
+
+                    <!-- Info Kerusakan -->
+                    <div class="detail-section">
+                        <h4><i class="fa-solid fa-triangle-exclamation"></i> Sarana & Kerusakan</h4>
+                        <div class="info-list">
+                            <div><span>Kategori:</span> <strong id="modal-detail-kategori">-</strong></div>
+                            <div><span>Lokasi Ruang:</span> <strong id="modal-detail-lokasi">-</strong></div>
+                            <div><span>Status Saat Ini:</span> <span id="modal-detail-status">-</span></div>
+                            <div><span>Progres Pengerjaan:</span> <span id="modal-detail-progres">-</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="detail-deskripsi-box">
+                    <label>Deskripsi Kerusakan:</label>
+                    <p id="modal-detail-deskripsi">-</p>
+                    <div id="modal-detail-foto-container" class="hidden">
+                        <label>Foto Bukti Kerusakan:</label>
+                        <img id="modal-detail-foto" src="" alt="Bukti Kerusakan" class="modal-img-preview">
+                    </div>
+                </div>
+
+                <!-- Histori Timeline & Umpan Balik -->
+                <div class="timeline-feedback-container">
+                    <div class="timeline-box">
+                        <h4><i class="fa-solid fa-timeline"></i> Riwayat Status</h4>
+                        <div class="timeline-list" id="modal-detail-histori">
+                            <!-- Populated via JS -->
+                        </div>
+                    </div>
+                    <div class="feedback-box">
+                        <h4><i class="fa-solid fa-comments"></i> Catatan Umpan Balik Petugas</h4>
+                        <div class="feedback-list" id="modal-detail-umpan-balik">
+                            <!-- Populated via JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FORM BERIKAN UMPAN BALIK & UBAH STATUS (KHUSUS ADMIN) -->
+                <div id="admin-feedback-form-wrapper" class="admin-action-section hidden">
+                    <h4><i class="fa-solid fa-reply"></i> Form Umpan Balik & Update Progres Petugas</h4>
+                    <form id="form-umpan-balik" onsubmit="submitUmpanBalik(event)">
+                        <input type="hidden" id="ub-id-aspirasi">
+                        
+                        <div class="form-row-2">
+                            <div class="form-group">
+                                <label for="ub-status-ke"><i class="fa-solid fa-arrow-right-arrow-left"></i> Ubah Status Penyelesaian:</label>
+                                <select id="ub-status-ke" required>
+                                    <option value="diproses">Diproses (Sedang Dikerjakan)</option>
+                                    <option value="selesai">Selesai (Sudah Diperbaiki)</option>
+                                    <option value="ditolak">Ditolak / Dibatalkan</option>
+                                    <option value="menunggu">Menunggu</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="ub-progres"><i class="fa-solid fa-percent"></i> Progres Perbaikan: <strong id="ub-progres-val">50%</strong></label>
+                                <input type="range" id="ub-progres" min="0" max="100" step="5" value="50" oninput="document.getElementById('ub-progres-val').innerText = this.value + '%'">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="ub-tanggapan"><i class="fa-solid fa-message"></i> Tanggapan / Umpan Balik Solusi Petugas <span class="required">*</span></label>
+                            <textarea id="ub-tanggapan" rows="2" placeholder="Contoh: Teknisi telah memeriksa kabel proyektor, penggantian suku cadang selesai..." required></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" id="btn-submit-ub">
+                            <i class="fa-solid fa-paper-plane"></i> Kirim Umpan Balik & Update Status
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- MODAL 2: MANAJEMEN KATEGORI SARANA             -->
+    <!-- ============================================== -->
+    <div id="modal-kategori" class="modal-overlay hidden">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Kelola Kategori Sarana Sekolah</h3>
+                <button class="btn-close-modal" onclick="closeModal('modal-kategori')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="form-tambah-kategori" onsubmit="submitTambahKategori(event)">
+                    <div class="form-row-2">
+                        <div class="form-group">
+                            <label for="kat-nama">Nama Kategori <span class="required">*</span></label>
+                            <input type="text" id="kat-nama" placeholder="Contoh: Ruang Olahraga" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="kat-deskripsi">Deskripsi</label>
+                            <input type="text" id="kat-deskripsi" placeholder="Keterangan kategori...">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-sm">
+                        <i class="fa-solid fa-plus"></i> Tambah Kategori
+                    </button>
+                </form>
+
+                <hr class="modal-divider">
+
+                <div class="table-responsive modal-table">
+                    <table class="custom-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nama Kategori</th>
+                                <th>Deskripsi</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-kategori-body">
+                            <!-- Populated via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- CETAK / PRINTABLE REPORT CONTAINER             -->
+    <!-- ============================================== -->
+    <div id="print-report-container" class="print-only">
+        <div class="print-kop">
+            <h2>PEMERINTAH PROVINSI / KEMENTERIAN PENDIDIKAN</h2>
+            <h3>SMK NEGERI CONTOH KOTA INDONESIA</h3>
+            <p>Jalan Pendidikan No. 123, Telp. (021) 555-6789 | Website: www.smk-sarpras.sch.id</p>
+            <hr class="kop-line">
+        </div>
+        <div class="print-title">
+            <h3>LAPORAN PENGADUAN & ASPIRASI SARANA SEKOLAH</h3>
+            <p id="print-filter-info">Periode: Semua Data</p>
+        </div>
+        <table class="print-table" id="print-table-data">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Kode Tiket</th>
+                    <th>Tanggal</th>
+                    <th>NISN & Siswa</th>
+                    <th>Kelas</th>
+                    <th>Kategori</th>
+                    <th>Lokasi</th>
+                    <th>Deskripsi Kerusakan</th>
+                    <th>Progres</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="print-table-body">
+                <!-- Populated before print -->
+            </tbody>
+        </table>
+        <div class="print-signature">
+            <div class="sign-box">
+                <p>Mengetahui,</p>
+                <p>Kepala Sekolah / Waka Sarpras</p>
+                <div class="sign-space"></div>
+                <p><strong>( _________________________ )</strong></p>
+                <p>NIP. .....................................</p>
+            </div>
+            <div class="sign-box">
+                <p id="print-date-now">Kota, 16 September 2026</p>
+                <p>Petugas Pengelola Sarpras</p>
+                <div class="sign-space"></div>
+                <p><strong id="print-officer-name">( Administrator Sarpras )</strong></p>
+                <p>NIP. .....................................</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="toast hidden">
+        <i id="toast-icon" class="fa-solid fa-circle-check"></i>
+        <span id="toast-message">Notifikasi</span>
+    </div>
+
+    <!-- JavaScript Application Logic -->
+    <script src="/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+[package]
+name = "pengaduan_sarana_sekolah"
+version = "0.1.0"
+edition = "2021"
+authors = ["Siswa RPL <siswa@smk.sch.id>"]
+description = "Aplikasi Pengaduan Sarana Sekolah - UKK RPL 2025/2026"
+
+[dependencies]
+axum = { version = "0.7", features = ["multipart", "macros"] }
+tokio = { version = "1.0", features = ["full"] }
+tower = { version = "0.4", features = ["util"] }
+tower-http = { version = "0.5", features = ["fs", "cors", "trace"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+rusqlite = { version = "0.31", features = ["bundled", "chrono", "blob"] }
+r2d2 = "0.8"
+r2d2_sqlite = "0.24"
+chrono = { version = "0.4", features = ["serde"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+uuid = { version = "1.8", features = ["v4", "serde"] }
