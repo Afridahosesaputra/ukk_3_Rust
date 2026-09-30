@@ -53,7 +53,16 @@ Aplikasi **Pengaduan Sarana Sekolah (SARPRAS CARE)** dibangun untuk mempermudah 
 
 ## 2. Desain Sistem & ERD
 
-### Diagram Hubungan Entitas (ERD):
+Berikut visualisasi diagram relasi entitas bergaya **MySQL Workbench Modeler** untuk 5 tabel ternormalisasi 3NF pada sistem SARPRAS CARE:
+
+![ERD Diagram Pengaduan Sarana Sekolah MySQL Workbench](assets/erd_diagram.png)
+
+> 📘 **Dokumentasi Lengkap & Slide Presentasi:**
+> - Panduan Detail & Kamus Data: [ERD.md](file:///d:/belajar%20ukk%20rust/ukk3/ERD.md)
+> - Berkas Presentasi Sidang: [Presentasi_Pengaduan_Sarana_UKK3.pptx](file:///d:/belajar%20ukk%20rust/ukk3/Presentasi_Pengaduan_Sarana_UKK3.pptx)
+> - Kanvas HTML Interaktif: [assets/erd_workbench.html](file:///d:/belajar%20ukk%20rust/ukk3/assets/erd_workbench.html)
+
+### Diagram Hubungan Entitas (Mermaid):
 
 ```mermaid
 erDiagram

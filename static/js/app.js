@@ -71,17 +71,36 @@ function switchView(viewName) {
 // 2. KATEGORI SARANA
 // ==========================================================
 
+const DEFAULT_CATEGORIES = [
+    { id: 1, nama_kategori: "Ruang Kelas & Perabot", deskripsi: "Meja, kursi siswa/guru, papan tulis, lemari, pintu, jendela kelas" },
+    { id: 2, nama_kategori: "Kelistrikan & Elektronik", deskripsi: "Lampu penerangan, stop kontak, saklar, kipas angin, AC pendingin ruang" },
+    { id: 3, nama_kategori: "Laboratorium & Komputer", deskripsi: "PC/Laptop lab, LCD proyektor, kabel VGA/HDMI, headset, jaringan internet/LAN" },
+    { id: 4, nama_kategori: "Sanitasi & Toilet", deskripsi: "Kloset, keran air, wastafel, saluran pembuangan, pintu toilet, bak air" },
+    { id: 5, nama_kategori: "Olahraga & Lapangan", deskripsi: "Tiang basket, gawang futsal, net voli/badminton, lapangan retak/licin" },
+    { id: 6, nama_kategori: "Perpustakaan & Sarana Lain", deskripsi: "Rak buku, karpet ruang baca, AC perpus, tempat sampah, koridor/taman" }
+];
+
 async function loadCategories() {
     try {
         const res = await fetch("/api/kategori");
-        const json = await res.json();
-        if (json.success && json.data) {
-            categoriesList = json.data;
-            populateCategoryDropdowns(categoriesList);
-            populateCategoryTable(categoriesList);
+        if (res.ok) {
+            const json = await res.json();
+            if (json.success && Array.isArray(json.data) && json.data.length > 0) {
+                categoriesList = json.data;
+                populateCategoryDropdowns(categoriesList);
+                populateCategoryTable(categoriesList);
+                return;
+            }
         }
     } catch (err) {
-        console.error("Gagal memuat kategori:", err);
+        console.warn("Koneksi API /api/kategori bermasalah, menggunakan daftar kategori default:", err);
+    }
+
+    // Fallback jika API belum aktif atau mengembalikan data kosong
+    if (!categoriesList || categoriesList.length === 0) {
+        categoriesList = DEFAULT_CATEGORIES;
+        populateCategoryDropdowns(categoriesList);
+        populateCategoryTable(categoriesList);
     }
 }
 
@@ -93,12 +112,24 @@ function populateCategoryDropdowns(categories) {
     let filterOptions = '<option value="0">Semua Kategori</option>';
 
     categories.forEach(k => {
-        studentOptions += `<option value="${k.id}">${k.nama_kategori}</option>`;
-        filterOptions += `<option value="${k.id}">${k.nama_kategori}</option>`;
+        studentOptions += `<option value="${k.id}">${escapeHtml(k.nama_kategori)}</option>`;
+        filterOptions += `<option value="${k.id}">${escapeHtml(k.nama_kategori)}</option>`;
     });
 
-    if (studentSelect) studentSelect.innerHTML = studentOptions;
-    if (filterSelect) filterSelect.innerHTML = filterOptions;
+    if (studentSelect) {
+        const curVal = studentSelect.value;
+        studentSelect.innerHTML = studentOptions;
+        if (curVal && categories.some(k => String(k.id) === String(curVal))) {
+            studentSelect.value = curVal;
+        }
+    }
+    if (filterSelect) {
+        const curVal = filterSelect.value;
+        filterSelect.innerHTML = filterOptions;
+        if (curVal && (curVal === "0" || categories.some(k => String(k.id) === String(curVal)))) {
+            filterSelect.value = curVal;
+        }
+    }
 }
 
 function populateCategoryTable(categories) {
